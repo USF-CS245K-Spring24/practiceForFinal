@@ -1,5 +1,7 @@
 package solution;
 
+import java.util.Stack;
+
 public class Graph {
     private Edge[] graph; // adjacency list for this graph
 
@@ -37,7 +39,7 @@ public class Graph {
 
 
     /**
-     * Use BFS or DFS to find out if there is a path from vertex 1 to vertex 2
+     * Use BFS to find out if there is a path from vertex 1 to vertex 2
      * @param vertex1 source vertex
      * @param vertex2 destination vertex
      */
@@ -56,7 +58,36 @@ public class Graph {
             while (currEdge != null) {
                 if (!visited[currEdge.neighbor]) {
                     visited[currEdge.neighbor] = true;
+                    // We could have checked here if currEdge.neighbor == vertex2
                     queue.enqueue(currEdge.neighbor);
+                }
+                currEdge = currEdge.next;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Use DFS to find out if there is a path from vertex 1 to vertex 2
+     * @param vertex1 source vertex
+     * @param vertex2 destination vertex
+     */
+    public boolean hasPathWithDFS(int vertex1, int vertex2) {
+        boolean[] visited = new boolean[graph.length];
+        visited[vertex1] = true;
+        Stack<Integer> stack = new Stack<>();
+        stack.push(vertex1);
+        while (!stack.empty()) {
+            int currVertex = stack.pop();
+            if (currVertex == vertex2)
+                return true;
+            visited[currVertex] = true;
+            Edge currEdge = graph[currVertex];
+            while (currEdge != null) {
+                if (!visited[currEdge.neighbor]) {
+                   // if (currEdge.neighbor == vertex2) // Could also check here if we found vertex2
+                     //   return true;
+                    stack.push(currEdge.neighbor);
                 }
                 currEdge = currEdge.next;
             }
@@ -119,6 +150,12 @@ public class Graph {
         System.out.println(g.hasPath(7, 4)); // true
         System.out.println(g.hasPath(3, 6)); // false
         System.out.println(g.hasPath(2, 5)); // true
+
+        System.out.println();
+        System.out.println(g.hasPathWithDFS(7, 4)); // true
+        System.out.println(g.hasPathWithDFS(3, 6)); // false
+        System.out.println(g.hasPathWithDFS(2, 5)); // true
+
 
         System.out.println();
         System.out.println(g.hasEdge(7,2)); // false
